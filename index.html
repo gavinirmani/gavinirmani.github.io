@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        /* Design System Tokens (Modeled after modern glassmorphic web apps) */
+        :root {
+            --bg-base: #0b0f17;          /* Ultra dark baseline */
+            --bg-panel: #131a26;         /* Transparent card back layer */
+            --accent-blue: #38bdf8;      /* Electric sky blue glow */
+            --accent-purple: #a855f7;    /* Vibrant tech violet */
+            --text-main: #f8fafc;        /* High contrast crisp white */
+            --text-sub: #94a3b8;         /* Muted slate gray secondary text */
+            --border-glow: #1e293b;      /* Dark subtle panels line */
+            --corner-radius: 16px;
+            --smooth-transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Global Structural Rules */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Abstract Radial Gradient Glow Layer */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(168, 85, 247, 0.03) 50%, rgba(0,0,0,0) 70%);
+            top: -150px;
+            right: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Sticky Glassmorphic Header Navigation Bar */
+        header {
+            background: rgba(11, 15, 23, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glow);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+        }
+
+        .brand-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--smooth-transition);
+        }
+
+        nav ul li a:hover {
+            color: var(--text-main);
+        }
+
+        /* Layout Framework Container */
+        .container {
+            max-width: 1100px;
+            margin: 100px auto 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 6rem 0;
+        }
+
+        .heading-group {
+            margin-bottom: 3rem;
+        }
+
+        .heading-group h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .heading-group p {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* 1. Identity Layout (Hero & About Section) */
+        .hero-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            color: var(--text-sub);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 650px;
+        }
+
+        /* Interactive Profile Gradient Frame Border */
+        .photo-wrapper {
+            position: relative;
+            width: 280px;
+            height: 297.9px;
+            border-radius: var(--corner-radius);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            padding: 3px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .photo-inner-clip {
+            background: var(--bg-base);
+            width: 100%;
+            height: 100%;
+            border-radius: calc(var(--corner-radius) - 3px);
+            overflow: hidden;
+        }
+
+        .profile-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--smooth-transition);
+        }
+
+        .photo-wrapper:hover .profile-media {
+            transform: scale(1.06);
+        }
+
+        /* Button Architecture */
+        .cta-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-link {
+            padding: 0.8rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: var(--smooth-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-filled {
+            background-color: var(--text-main);
+            color: var(--bg-base);
+        }
+
+        .btn-filled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-bordered {
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .btn-bordered:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-sub);
+        }
+
+        /* 2. Education Layout Timeline Tracker */
+        .vertical-timeline {
+            position: relative;
+            border-left: 2px solid var(--border-glow);
+            padding-left: 2rem;
+            margin-left: 0.5rem;
+        }
+
+        .timeline-block {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-indicator-node {
+            position: absolute;
+            left: calc(-2rem - 6px);
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            box-shadow: 0 0 12px var(--accent-blue);
+        }
+
+        /* 3 & 4. Grid Framework Cards (Projects & Achievements) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .interactive-panel-card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 2rem;
+            transition: var(--smooth-transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle modern lighting effect when mouse pointer rests on card */
+        .interactive-panel-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.04) 0%, rgba(168, 85, 247, 0.04) 100%);
+            opacity: 0;
+            transition: var(--smooth-transition);
+        }
+
+        .interactive-panel-card:hover {
+            transform: translateY(-5px);
+            border-color: #334155;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interactive-panel-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-inner-layer {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-heading-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-label-tagline {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Pill Architecture for Technologies Stack */
+        .pill-cluster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-pill {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+          /* Dynamic Matrix Grid for Skills Framework */
+        .skills-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .skills-matrix-node {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 1.5rem;
+            transition: var(--smooth-transition);
+        }
+
+        .skills-matrix-node:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .skills-matrix-category {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .skills-matrix-items {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        /* 5. Contact Layer Matrix Component */
+        .network-contact-box {
+            background: linear-gradient(135deg, #131a26 0%, #0f141e 100%);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 3rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .network-contact-box p {
+            color: var(--text-sub);
+            max-width: 520px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        /* Responsive Breakpoint Adaptability Layer */
+        @media(max-width: 900px) {
+            .hero-layout {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+            .photo-wrapper {
+                margin: 0 auto;
+                order: -1; /* Pushes portrait above title on mobile screens */
+            }
+            .cta-row {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+
+    <header>
+        <nav>
+            <div class="brand-logo">MY PORTFOLIO</div>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#achievements">Achievements</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <section id="about" class="hero-layout">
+            <div class="hero-content">
+                <h1>Hello, I'm Gaveshika Nirmani</h1>
+                <p> I am an aspiring Data Science Undergraduate Student with a passion for building clean, efficient, and user-centric web applications. Focused on continuous learning and solving complex real-world problems through robust code.</p>
+                <div class="cta-row">
+                    <a href="my_resume.pdf" class="action-link btn-filled" download>Download CV / Resume (PDF)</a>
+                    <a href="#contact" class="action-link btn-bordered">Initialize Collaboration</a>
+                </div>
+            </div>
+            <div class="photo-wrapper">
+                <div class="photo-inner-clip">
+                    <img src="profile.jpeg" class="profile-media">
+                </div>
+            </div>
+        </section>
+
+        <section id="education">
+            <div class="heading-group">
+                <h2>Education</h2>
+                <p>Academic milestones and qualifications tracking technical paradigms.</p>
+            </div>
+            <div class="vertical-timeline">
+                <div class="timeline-block">
+                    <div class="timeline-indicator-node"></div>
+                    <h3 style="font-size: 1.3rem;">BSc (Hons) in Data Science</h3>
+                    <div style="color: var(--accent-purple); font-weight: 600; font-size: 0.95rem; margin: 0.25rem 0;">SriLanka Technological Campus (2025 - Present)</div>
+                    <p style="color: var(--text-sub); max-width: 720px;">Engaging in advanced topics including Professional Practices, Object-Oriented System Architecture, Structural Database Management.</p>
+                </div>
+                <div class="timeline-block">
+                    <div class="timeline-indicator-node"></div>
+                    <h3 style="font-size: 1.3rem;">G.C.E. Advanced Level</h3>
+                    <div style="color: var(--accent-purple); font-weight: 600; font-size: 0.95rem; margin: 0.25rem 0;">G/Neluwa National School (Completed - 2023)</div>
+                    <p style="color: var(--text-sub); max-width: 720px;">Successfully completed secondary education in the Technology stream.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="heading-group">
+                <h2>Projects</h2>
+                <p>A focused collection of engineered software utilities developed from scratch.</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="interactive-panel-card">
+                   <!-- Fixed Image Container for Project Previews -->
+<div style="width: 100%; display: flex; justify-content: center; align-items: center; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border-glow); background: #1a2333; padding: 0.5rem;">
+    <img src="project_preview.jpg" alt="Student Record Management System Screenshot" style="max-width: 100%; max-height: 350px; width: auto; height: auto; border-radius: 4px; transition: var(--smooth-transition);" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+</div>
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Student Record Management System</h3>
+                        <div class="card-label-tagline">Data Management Application</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">A comprehensive solution for managing student records with a focus on data integrity and user efficiency.</p>
+                        <div class="pill-cluster">
+                            <span class="tech-pill">Python tkinter</span>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="achievements">
+            <div class="heading-group">
+                <h2>Achievements & Certifications</h2>
+                <p>Industry qualifications, badges, and competitive technical recognition scales.</p>
+            </div>
+            <div class="dashboard-grid">
+                
+                <!-- Card 1: Alison Data Science -->
+                <div class="interactive-panel-card">   
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science - Work with Data </h3>
+                        <div class="card-label-tagline">Certificate Course from Alison - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Building Data pipelines and analyzing datasets with Azure AI, Python, and R.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="alison_certificate_01.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Alison Data Visualization -->
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science - Visualizing Data and Exploring Models</h3>
+                        <div class="card-label-tagline">Certificate Course from Alison - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Visualizing data and exploring machine learning models using Python and Azure AI.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="alison_certificate_02.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Simplilearn Data Scientist -->
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science and Business Analytics</h3>
+                        <div class="card-label-tagline">Certificate Course from Simplilearn - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Mastering core data science concepts, data analysis, and predictive modeling techniques using industry-standard tools.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Simplilearn_certificate.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+         <!-- Dynamic Overall Skills Matrix Component -->
+        <section id="skills" class="animated-entrance delay-2">
+            <div class="heading-group">
+                <h2>Overall Skills</h2>
+                <p>Technical proficiencies unified across academic and specialized coursework frameworks.</p>
+            </div>
+            <div class="skills-matrix-grid">
+                
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Languages & Frameworks</div>
+                    <div class="skills-matrix-items">Python, R</div>
+                </div>
+
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Cloud & AI Platforms</div>
+                    <div class="skills-matrix-items">Azure AI</div>
+                </div>
+
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Data Engineering</div>
+                    <div class="skills-matrix-items">Data Pipelines, Dataset Analysis, Data Wrangling</div>
+                </div>
+
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Data Science & ML</div>
+                    <div class="skills-matrix-items">Predictive Modeling, Machine Learning Models, Core Statistical Concepts</div>
+                </div>
+
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Business Intelligence</div>
+                    <div class="skills-matrix-items">Business Analytics, Data Visualization, Insights Generation</div>
+                </div>
+
+            </div>
+        </section>
+       
+
+        <section id="contact" style="padding-bottom: 8rem;">
+            <div class="network-contact-box">
+                <h2 style="font-size: 2.25rem; margin-bottom: 1rem; font-weight: 800;">Let's Initiate a Conversation.</h2>
+                <p>I am actively exploring prospective internships, open-source collaborative efforts, or technical research projects. Reach out directly through any connection endpoint.</p>
+                <div class="cta-row" style="justify-content: center; flex-wrap: wrap;">
+                    <a href="https://github.com/gaviNirmani" target="_blank" class="action-link btn-bordered">GitHub Profile</a>
+                    <a href="https://linkedin.com/in/gaveshika-nirmani-827443301" target="_blank" class="action-link btn-bordered">LinkedIn Profile</a>
+                    <a href="mailto:gaveshikan@gmail.com" class="action-link btn-filled">Send Direct Email</a>
+                </div>
+            </div>
+        </section>
+       
+
+
+    </div>
+
+    <footer style="border-top: 1px solid var(--border-glow); padding: 2.5rem 0; text-align: center; background-color: #070a10;">
+        <p style="color: var(--text-sub); font-size: 0.85rem;">&copy; 2026 Gaveshika Nirmani. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
