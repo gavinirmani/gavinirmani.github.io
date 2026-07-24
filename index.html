@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        /* Design System Tokens */
+        :root {
+            --bg-base: #0b0f17;          /* Ultra dark baseline */
+            --bg-panel: #131a26;         /* Transparent card back layer */
+            --accent-blue: #38bdf8;      /* Electric sky blue glow */
+            --accent-purple: #a855f7;    /* Vibrant tech violet */
+            --text-main: #f8fafc;        /* High contrast crisp white */
+            --text-sub: #94a3b8;         /* Muted slate gray secondary text */
+            --border-glow: #1e293b;      /* Dark subtle panels line */
+            --corner-radius: 16px;
+            --smooth-transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Light Mode Variables Override */
+        [data-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-panel: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --border-glow: #e2e8f0;
+        }
+
+        /* Global Structural Rules */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            position: relative;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Fullscreen Network Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Sticky Glassmorphic Header Navigation Bar */
+        header {
+            background: rgba(11, 15, 23, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glow);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] header {
+            background: rgba(248, 250, 252, 0.85);
+        }
+
+        nav {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+        }
+
+        .brand-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav ul li a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--smooth-transition);
+            position: relative;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: var(--smooth-transition);
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        nav ul li a:hover {
+            color: var(--text-main);
+        }
+
+        /* Theme Toggle Button Style */
+        .theme-toggle-btn {
+            background: transparent;
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: var(--smooth-transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu Triggers */
+        .menu-toggle, .menu-btn {
+            display: none;
+        }
+
+        /* Layout Framework Container */
+        .container {
+            max-width: 1100px;
+            margin: 100px auto 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 6rem 0;
+        }
+
+        /* Scroll Reveal State */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .heading-group {
+            margin-bottom: 3rem;
+        }
+
+        .heading-group h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .heading-group p {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* Hero Section */
+        .hero-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            color: var(--text-sub);
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            max-width: 650px;
+        }
+
+        .photo-wrapper {
+            position: relative;
+            width: 280px;
+            height: 297.9px;
+            border-radius: var(--corner-radius);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            padding: 3px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+            }
+            100% {
+                box-shadow: 0 20px 45px rgba(168, 85, 247, 0.45);
+            }
+        }
+
+        .photo-inner-clip {
+            background: var(--bg-base);
+            width: 100%;
+            height: 100%;
+            border-radius: calc(var(--corner-radius) - 3px);
+            overflow: hidden;
+        }
+
+        .profile-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--smooth-transition);
+        }
+
+        .photo-wrapper:hover .profile-media {
+            transform: scale(1.06);
+        }
+
+        /* Buttons */
+        .cta-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-link {
+            padding: 0.8rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: var(--smooth-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-filled {
+            background-color: var(--text-main);
+            color: var(--bg-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-filled::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            transition: transform 0.6s ease;
+        }
+
+        .btn-filled:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .btn-filled:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-bordered {
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .btn-bordered:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Timeline */
+        .vertical-timeline {
+            position: relative;
+            border-left: 2px solid var(--border-glow);
+            padding-left: 2rem;
+            margin-left: 0.5rem;
+        }
+
+        .timeline-block {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-indicator-node {
+            position: absolute;
+            left: calc(-2rem - 6px);
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            box-shadow: 0 0 12px var(--accent-blue);
+            animation: nodePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes nodePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 6px var(--accent-blue);
+            }
+            100% {
+                transform: scale(1.3);
+                box-shadow: 0 0 16px var(--accent-purple);
+            }
+        }
+
+        /* Cards Framework */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .interactive-panel-card {
+            background-color: rgba(19, 26, 38, 0.85); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 2rem;
+            transition: var(--smooth-transition);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        [data-theme="light"] .interactive-panel-card {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .interactive-panel-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+            opacity: 0;
+            transition: var(--smooth-transition);
+        }
+
+        .interactive-panel-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .interactive-panel-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-inner-layer {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-heading-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-label-tagline {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pill-cluster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-pill {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] .tech-pill {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .tech-pill:hover {
+            background: var(--accent-purple);
+            color: #ffffff;
+        }
+
+        .skills-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .skills-matrix-node {
+            background: rgba(19, 26, 38, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 1.5rem;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] .skills-matrix-node {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .skills-matrix-node:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(168, 85, 247, 0.15);
+        }
+
+        .skills-matrix-category {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .skills-matrix-items {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .network-contact-box {
+            background: linear-gradient(135deg, rgba(19, 26, 38, 0.9) 0%, rgba(15, 20, 30, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--corner-radius);
+            padding: 3rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] .network-contact-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%);
+        }
+
+        .network-contact-box p {
+            color: var(--text-sub);
+            max-width: 520px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        /* --- MODERNIZED CHATBOT WIDGET STYLES --- */
+        .chatbot-trigger {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            height: 52px;
+            padding: 0 1.25rem;
+            border-radius: 30px;
+            background: rgba(19, 26, 38, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] .chatbot-trigger {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .chatbot-trigger:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.25);
+        }
+
+        .trigger-pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            position: relative;
+        }
+
+        .trigger-pulse-dot::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 95px;
+            right: 28px;
+            width: 380px;
+            max-width: calc(100vw - 36px);
+            height: 540px;
+            max-height: calc(100vh - 120px);
+            background: rgba(15, 21, 32, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.96);
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] .chatbot-container {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .chatbot-container.open {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0) scale(1);
+        }
+
+        .chat-header {
+            padding: 1.2rem 1.25rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-glow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        .chat-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
+        .chat-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 2px;
+        }
+
+        .chat-subtitle-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        .chat-close-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: var(--text-sub);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--smooth-transition);
+        }
+
+        .chat-close-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-message-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: flex-end;
+            animation: fadeInMsg 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message-row.user-row {
+            flex-direction: row-reverse;
+        }
+
+        .msg-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            color: var(--text-sub);
+        }
+
+        .user-row .msg-avatar {
+            background: var(--accent-purple);
+            color: #fff;
+        }
+
+        .chat-bubble {
+            max-width: 78%;
+            padding: 0.8rem 1.1rem;
+            border-radius: 18px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .chat-bubble.bot {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            border: 1px solid var(--border-glow);
+            border-bottom-left-radius: 4px;
+        }
+
+        [data-theme="light"] .chat-bubble.bot {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .chat-bubble.user {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Quick Suggestion Chips */
+        .chat-chips-wrapper {
+            padding: 0.5rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            border-top: 1px solid var(--border-glow);
+            background: rgba(0, 0, 0, 0.1);
+            scrollbar-width: none;
+        }
+
+        .chat-chips-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            color: var(--text-sub);
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--smooth-transition);
+        }
+
+        .chat-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-main);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .chat-input-area {
+            padding: 0.8rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
+            padding: 0.75rem 1.1rem;
+            border-radius: 24px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+            transition: var(--smooth-transition);
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #ffffff;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--smooth-transition);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-glow);
+            padding: 2.5rem 0;
+            text-align: center;
+            background-color: #070a10;
+            transition: var(--smooth-transition);
+        }
+
+        [data-theme="light"] footer {
+            background-color: #f1f5f9 !important;
+        }
+
+        /* Mobile Responsiveness */
+        @media(max-width: 900px) {
+            .container {
+                padding: 0 1.25rem;
+                margin-top: 80px;
+            }
+
+            section {
+                padding: 3.5rem 0;
+            }
+
+            .hero-content h1 {
+                font-size: 2.3rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+                margin-bottom: 1.8rem;
+            }
+
+            .heading-group h2 {
+                font-size: 1.8rem;
+            }
+
+            .menu-btn {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 24px;
+                height: 18px;
+                cursor: pointer;
+                z-index: 1001;
+            }
+
+            .menu-btn span {
+                display: block;
+                height: 2px;
+                width: 100%;
+                background-color: var(--text-main);
+                border-radius: 2px;
+                transition: var(--smooth-transition);
+            }
+
+            nav ul {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 75%;
+                max-width: 300px;
+                height: 100vh;
+                background: rgba(19, 26, 38, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-left: 1px solid var(--border-glow);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2.5rem;
+                transition: var(--smooth-transition);
+            }
+
+            [data-theme="light"] nav ul {
+                background: rgba(255, 255, 255, 0.95);
+            }
+
+            .menu-toggle:checked ~ ul {
+                right: 0;
+            }
+
+            .menu-toggle:checked ~ .menu-btn span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+
+            .menu-toggle:checked ~ .menu-btn span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-toggle:checked ~ .menu-btn span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+
+            .hero-layout {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .photo-wrapper {
+                margin: 0 auto;
+                order: -1; 
+                width: 240px;
+                height: 255px;
+            }
+
+            .cta-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .action-link {
+                justify-content: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .network-contact-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .chatbot-container {
+                right: 18px;
+                left: 18px;
+                width: auto;
+                bottom: 85px;
+            }
+
+            .chatbot-trigger {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle Network Background Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <header>
+        <nav>
+            <div class="brand-logo">MY PORTFOLIO</div>
+            
+            <input type="checkbox" id="menu-toggle" class="menu-toggle">
+            <label for="menu-toggle" class="menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul>
+                <li><a href="#about" onclick="document.getElementById('menu-toggle').checked = false;">About</a></li>
+                <li><a href="#education" onclick="document.getElementById('menu-toggle').checked = false;">Education</a></li>
+                <li><a href="#projects" onclick="document.getElementById('menu-toggle').checked = false;">Projects</a></li>
+                <li><a href="#achievements & certifications" onclick="document.getElementById('menu-toggle').checked = false;">Achievements & Certifications</a></li>
+                <li><a href="#skills" onclick="document.getElementById('menu-toggle').checked = false;">Skills</a></li>
+                <li><a href="#contact" onclick="document.getElementById('menu-toggle').checked = false;">Contact</a></li>
+                <li><button id="theme-toggle" class="theme-toggle-btn">🌙 Dark</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <section id="about" class="hero-layout reveal">
+            <div class="hero-content">
+                <h1>Hello, I'm Gaveshika Nirmani</h1>
+                <p>I am an aspiring Data Science Undergraduate Student with a passion for building clean, efficient, and user-centric web applications. Focused on continuous learning and solving complex real-world problems through robust code.</p>
+                <div class="cta-row">
+                    <a href="my_resume.pdf" class="action-link btn-filled" download>Download CV</a>
+                    <a href="#contact" class="action-link btn-filled">Initialize Collaboration</a>
+                </div>
+            </div>
+            <div class="photo-wrapper">
+                <div class="photo-inner-clip">
+                    <img src="profile.jpeg" class="profile-media" alt="Profile Picture">
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="reveal">
+            <div class="heading-group">
+                <h2>Education</h2>
+                <p>Academic milestones and qualifications tracking technical paradigms.</p>
+            </div>
+            <div class="vertical-timeline">
+                <div class="timeline-block">
+                    <div class="timeline-indicator-node"></div>
+                    <h3 style="font-size: 1.3rem;">BSc (Hons) in Data Science</h3>
+                    <div style="color: var(--accent-blue); font-weight: 600; font-size: 0.95rem; margin: 0.25rem 0;">SriLanka Technological Campus (2025 - Present)</div>
+                    <p style="color: var(--text-sub); max-width: 720px;">Engaging in advanced topics including Professional Practices, Object-Oriented System Architecture, Structural Database Management.</p>
+                </div>
+                <div class="timeline-block">
+                    <div class="timeline-indicator-node"></div>
+                    <h3 style="font-size: 1.3rem;">G.C.E. Advanced Level</h3>
+                    <div style="color: var(--accent-blue); font-weight: 600; font-size: 0.95rem; margin: 0.25rem 0;">G/Neluwa National School (Completed - 2023)</div>
+                    <p style="color: var(--text-sub); max-width: 720px;">Successfully completed secondary education in the Technology stream.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="reveal">
+            <div class="heading-group">
+                <h2>Projects</h2>
+                <p>A focused collection of engineered software utilities developed from scratch.</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="interactive-panel-card">
+                    <div style="width: 100%; display: flex; justify-content: center; align-items: center; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border-glow); background: #1a2333; padding: 0.5rem; overflow: hidden;">
+                        <img src="project_preview.jpg" alt="Student Record Management System Screenshot" style="max-width: 100%; max-height: 350px; width: auto; height: auto; border-radius: 4px; transition: var(--smooth-transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Student Record Management System</h3>
+                        <div class="card-label-tagline">Data Management Application</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">A comprehensive solution for managing student records with a focus on data integrity and user efficiency.</p>
+                        <div class="pill-cluster">
+                            <span class="tech-pill">Python tkinter</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements & certifications" class="reveal">
+            <div class="heading-group">
+                <h2>Achievements & Certifications</h2>
+                <p>Industry qualifications, badges, and competitive technical recognition scales.</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="interactive-panel-card">   
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science - Work with Data </h3>
+                        <div class="card-label-tagline"> Course from Alison - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Building Data pipelines and analyzing datasets with Azure AI, Python, and R.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="alison_certificate_01.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science - Visualizing Data and Exploring Models</h3>
+                        <div class="card-label-tagline"> Course from Alison - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Visualizing data and exploring machine learning models using Python and Azure AI.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="alison_certificate_02.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Data Science and Business Analytics</h3>
+                        <div class="card-label-tagline"> Course from Simplilearn - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Mastering core data science concepts, data analysis, and predictive modeling techniques using industry-standard tools.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Simplilearn_certificate.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Introduction to Microsoft Azure Data Relational data in Azure</h3>
+                        <div class="card-label-tagline">Course from Microsoft - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Foundational guide that teaches how structured, table-based databases like SQL Server, MySQL, and PostgreSQL are hosted, managed, and scaled efficiently in the Microsoft cloud.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Microsoft_Azure_certificate.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Build a free website with WordPress</h3>
+                        <div class="card-label-tagline">Course from Coursera - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Learn how to create and manage a professional website using WordPress, the leading content management system.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Coursera_certificate 01.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Graphic design</h3>
+                        <div class="card-label-tagline">Course from Coursera - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Learn the fundamentals of graphic design and how to use industry-standard tools to create compelling visual content.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Coursera_certificate 02.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Getting Started in Google Analytics</h3>
+                        <div class="card-label-tagline">Course from Coursera - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Learn how to use Google Analytics to track and analyze website performance.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Coursera_certificate 03.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Become a Data Scientist: Statistics for Data Science</h3>
+                        <div class="card-label-tagline">Course from Simplilearn - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Learn fundamental statistical techniques to analyze data, interpret complex patterns, and make informed business decisions using real-world data science workflows.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Simplilearn_certificate 02.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-panel-card">
+                    <div class="card-inner-layer">
+                        <h3 class="card-heading-title">Working with BigQuery</h3>
+                        <div class="card-label-tagline">Course from Coursera - 2026</div>
+                        <p style="color: var(--text-sub); font-size: 0.95rem;">Learn to navigate Google BigQuery, optimize SQL queries, manage large-scale data structures, and derive actionable business insights in a cloud environment.</p>
+                        <div style="margin-top: 1.5rem;">
+                            <a href="Coursera_certificate 04.pdf" target="_blank" class="action-link btn-bordered" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">Certificate pdf</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="reveal">
+            <div class="heading-group">
+                <h2>Skills</h2>
+                <p>Technical proficiencies unified across academic and specialized coursework frameworks.</p>
+            </div>
+            <div class="skills-matrix-grid">
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Languages & Frameworks</div>
+                    <div class="skills-matrix-items">Python, R, Java, HTML, SQL</div>
+                </div>
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Cloud & AI Platforms</div>
+                    <div class="skills-matrix-items">Azure AI</div>
+                </div>
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Data Engineering</div>
+                    <div class="skills-matrix-items">Data Pipelines, Dataset Analysis, Data Wrangling</div>
+                </div>
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Data Science & ML</div>
+                    <div class="skills-matrix-items">Predictive Modeling, Machine Learning Models, Core Statistical Concepts</div>
+                </div>
+                <div class="skills-matrix-node">
+                    <div class="skills-matrix-category">Business Intelligence</div>
+                    <div class="skills-matrix-items">Business Analytics, Data Visualization, Insights Generation</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" style="padding-bottom: 8rem;" class="reveal">
+            <div class="network-contact-box">
+                <h2 style="font-size: 2.25rem; margin-bottom: 1rem; font-weight: 800;">Let's Initiate a Conversation.</h2>
+                <p>I am actively exploring prospective internships, open-source collaborative efforts, or technical research projects. Reach out directly through any connection endpoint.</p>
+                <div class="cta-row" style="justify-content: center; flex-wrap: wrap;">
+                    <a href="https://github.com/gaviNirmani" target="_blank" class="action-link btn-filled">GitHub Profile</a>
+                    <a href="https://linkedin.com/in/gaveshika-nirmani-827443301" target="_blank" class="action-link btn-filled">LinkedIn Profile</a>
+                    <a href="mailto:gaveshikan@gmail.com" class="action-link btn-filled">Send Direct Email</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODERNIZED AI CHATBOT UI -->
+    <button class="chatbot-trigger" id="chat-trigger">
+        <span class="trigger-pulse-dot"></span>
+        <span>Ask AI Assistant</span>
+    </button>
+
+    <div class="chatbot-container" id="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-profile">
+                <div class="chat-avatar">✨</div>
+                <div class="chat-title-group">
+                    <div class="chat-title">Gaveshika's AI Agent</div>
+                    <div class="chat-subtitle">
+                        <span class="chat-subtitle-dot"></span>
+                        Online | Interactive Guide
+                    </div>
+                </div>
+            </div>
+            <button class="chat-close-btn" id="chat-close">&times;</button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-message-row bot-row">
+                <div class="msg-avatar">🤖</div>
+                <div class="chat-bubble bot">Hello! 👋 I am Gaveshika's portfolio assistant. What would you like to explore today?</div>
+            </div>
+        </div>
+
+        <!-- Quick Prompt Suggestion Chips -->
+        <div class="chat-chips-wrapper">
+            <button class="chat-chip" onclick="sendQuickPrompt('What are her key skills?')">⚡ Skills</button>
+            <button class="chat-chip" onclick="sendQuickPrompt('Show me her projects')">💻 Projects</button>
+            <button class="chat-chip" onclick="sendQuickPrompt('Tell me about her education')">🎓 Education</button>
+            <button class="chat-chip" onclick="sendQuickPrompt('List her certifications')">📜 Certifications</button>
+            <button class="chat-chip" onclick="sendQuickPrompt('How can I contact her?')">📬 Contact Info</button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+            <button class="chat-send-btn" id="chat-send">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p style="color: var(--text-sub); font-size: 0.85rem;">&copy; 2026 Gaveshika Nirmani. All rights reserved.</p>
+    </footer>
+
+    <!-- Interactive UI, Theme Toggle, Modernized Chatbot & Background Canvas Script -->
+    <script>
+        // --- DARK / LIGHT THEME TOGGLE ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        let particleColor = '#38bdf8';
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggleBtn.innerHTML = '☀️ Light';
+                particleColor = '#0284c7';
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggleBtn.innerHTML = '🌙 Dark';
+                particleColor = '#38bdf8';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            setTheme('light');
+        } else {
+            setTheme('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // --- PARTICLE CANVAS ANIMATION ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 70;
+        const maxDistance = 120;
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                if (mouse.x && mouse.y) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        let force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= (dx / dist) * force * 2;
+                        this.y -= (dy / dist) * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = particleColor;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < maxDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = particleColor === '#0284c7' 
+                            ? `rgba(2, 132, 199, ${0.4 * (1 - dist / maxDistance)})` 
+                            : `rgba(56, 189, 248, ${1 - dist / maxDistance})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- SCROLL REVEAL ANIMATION ---
+        const observerOptions = { threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- CARD 3D TILT ANIMATION ---
+        const tiltCards = document.querySelectorAll('.interactive-panel-card');
+
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                card.style.transform = `perspective(1000px) rotateX(${-y / 25}deg) rotateY(${x / 25}deg) translateY(-5px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
+            });
+        });
+
+        // --- MODERN CHATBOT ENGINE ---
+        const chatTrigger = document.getElementById('chat-trigger');
+        const chatContainer = document.getElementById('chat-container');
+        const chatClose = document.getElementById('chat-close');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+
+        chatTrigger.addEventListener('click', () => {
+            chatContainer.classList.toggle('open');
+            if (chatContainer.classList.contains('open')) {
+                chatInput.focus();
+            }
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatContainer.classList.remove('open');
+        });
+
+        function appendMessage(text, sender) {
+            const row = document.createElement('div');
+            row.classList.add('chat-message-row', sender === 'user' ? 'user-row' : 'bot-row');
+
+            const avatar = document.createElement('div');
+            avatar.classList.add('msg-avatar');
+            avatar.innerText = sender === 'user' ? '👤' : '🤖';
+
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', sender);
+            bubble.innerText = text;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+
+            chatMessages.appendChild(row);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(userMsg) {
+            const msg = userMsg.toLowerCase();
+
+            if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
+                return "Hello! How can I assist you with Gaveshika's portfolio today?";
+            } else if (msg.includes('skill') || msg.includes('python') || msg.includes('java') || msg.includes('language')) {
+                return "Gaveshika is skilled in Python, R, Java, HTML, SQL, Azure AI, Data Engineering, and Machine Learning modeling!";
+            } else if (msg.includes('education') || msg.includes('degree') || msg.includes('university') || msg.includes('school')) {
+                return "Gaveshika is studying for a BSc (Hons) in Data Science at Sri Lanka Technological Campus (SLTC) and completed secondary education at G/Neluwa National School.";
+            } else if (msg.includes('project')) {
+                return "Featured project: A Student Record Management System engineered with Python tkinter!";
+            } else if (msg.includes('certificate') || msg.includes('certification') || msg.includes('coursera') || msg.includes('alison')) {
+                return "Gaveshika holds credentials from Alison, Simplilearn, Microsoft, and Coursera in BigQuery, Data Science, Azure, WordPress, and Graphic Design!";
+            } else if (msg.includes('contact') || msg.includes('email') || msg.includes('github') || msg.includes('linkedin')) {
+                return "You can reach Gaveshika via email at gaveshikan@gmail.com, or check out GitHub & LinkedIn linked below!";
+            } else if (msg.includes('who are you') || msg.includes('about')) {
+                return "I'm an interactive AI assistant designed to navigate Gaveshika Nirmani's Data Science portfolio website.";
+            } else {
+                return "I'm not completely sure about that! Try asking about Gaveshika's skills, education, projects, certifications, or contact info.";
+            }
+        }
+
+        function handleSend() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            chatInput.value = '';
+
+            setTimeout(() => {
+                const response = getBotResponse(text);
+                appendMessage(response, 'bot');
+            }, 350);
+        }
+
+        function sendQuickPrompt(promptText) {
+            chatInput.value = promptText;
+            handleSend();
+        }
+
+        chatSend.addEventListener('click', handleSend);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+    </script>
+
+</body>
+</html>
